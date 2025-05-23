@@ -7,25 +7,37 @@ socket.on('connect', function () {
 function signup() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    console.log("Signup clicked:", username, password);
-    // socket.emit(...) or fetch(...)
-}
-
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    fetch('/login', {
+    fetch('/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ username, password })
     })
-    .then(res => res.json())
-    .then(data => {
-        console.log('Response from server:', data);
-    });
+    console.log("SIGN UP")
+}
+
+function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    console.log(username, password)
+
+    fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // login success, maybe redirect
+                // alert("Login successful: " + data.message)
+                window.location.href = "/player_options"
+            } else {
+                alert("Login failed: " + data.message);
+            }
+        });
+
 }
 
 function playAsGuest() {

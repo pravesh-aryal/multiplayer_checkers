@@ -1,0 +1,15 @@
+{
+  "name": "multiplayer_checkers",
+  "version": "1.0.0",
+  "description": "This is a Flask-based multiplayer server for the checkers game. The project is designed to be lightweight, concurrent, and support real-time or turn-based play through browser clients.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}

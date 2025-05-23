@@ -6,6 +6,10 @@
     <title>Checkers</title>
 </head>
 <body>
-    <h1>This is checkers.html </h1>
+    <h1>Checkers Game</h1>
+    <div id="board">{{ board_config | tojson(indent=2) }}</div>
+    <button id="btn" type="submit">Make move button</button>
+
+    <script type="module" src="{{ url_for('static', filename='js/checkers.mjs') }}"></script>
 </body>
 </html>

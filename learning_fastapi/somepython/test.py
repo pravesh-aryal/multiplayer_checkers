@@ -1,7 +1,2 @@
-from enum import Enum
-
-class RandomClass(str, Enum):
-    pass
-
-a = RandomClass
-print(type(a))
+ls = [1,2,3,4,5,6]
+print(ls[0:9999])

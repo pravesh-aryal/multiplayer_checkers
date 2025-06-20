@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>6x6 Toggle Board</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(6, 60px);
+            grid-template-rows: repeat(6, 60px);
+            gap: 1px;
+            border: 2px solid #333;
+            width: max-content;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            background-color: #ddd;
+            cursor: pointer;
+        }
+
+        .cell.red {
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="btn-join"> Join game</button>
+    <h2>6x6 Clickable Board</h2>
+    <div class="board" id="board"></div>
+
+    <script>
+        const board = document.getElementById("board");
+        const btnJoin = document.getElementById("btn-join");
+        let ws = new WebSocket("ws://localhost:8000/ws")
+        
+        for (let i = 0; i < 36; i++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+
+            // Add toggle functionality on click
+            cell.addEventListener("click", () => {
+                cell.classList.toggle("red");
+            });
+
+            board.appendChild(cell);
+        }
+
+        btnJoin.addEventListener("click", e => {
+            let payLoad = {
+                "method": "join",
+            }
+            ws.send(JSON.stringify(payLoad))
+        })
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>

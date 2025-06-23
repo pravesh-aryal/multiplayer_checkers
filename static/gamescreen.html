@@ -33,6 +33,14 @@
     <div class="board" id="board"></div>
 
     <script>
+        let payload;
+        let games = [];
+        let gameId;
+        let playerId;
+        let gameState;
+
+        let cells = ["white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white","white", "white"]
+        let cellsDiv = [];
         const board = document.getElementById("board");
         const btnJoin = document.getElementById("btn-join");
         let ws = new WebSocket("ws://localhost:8000/ws")
@@ -40,25 +48,78 @@
         for (let i = 0; i < 36; i++) {
             const cell = document.createElement("div");
             cell.classList.add("cell");
-
+            cell.id = i;
             // Add toggle functionality on click
             cell.addEventListener("click", () => {
                 cell.classList.toggle("red");
+                if (cells[parseInt(cell.id)] == "white"){
+                    cells[parseInt(cell.id)] = "red"
+                }
+                else{
+                    cells[parseInt(cell.id)] = "white"
+                }
+                payLoad = {
+                    "method": "update",
+                    "gameId": gameId,
+                    "palyerId": playerId,
+                    "cells" : cells
+                }
+            cellsDiv.push(cell);
+                ws.send(JSON.stringify(payLoad));
             });
 
             board.appendChild(cell);
         }
 
         btnJoin.addEventListener("click", e => {
-            let payLoad = {
+            payLoad = {
                 "method": "join",
             }
-            ws.send(JSON.stringify(payLoad))
+            ws.send(JSON.stringify(payLoad));
+
         })
 
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log(data.method);
+            if (data.method == "update")
+            {
+                cellsArr = data.cells;
+                console.log('AM i ever here?')
+                updateBoard(cellsArr);
+            }
+
+            if (!data.method){
+                games.push(data);
+                gameId = data["gameId"]
+                console.log(data)
+                console.log(data["players"])
+                if (data.players.length === 1) {
+                    playerId = data.players[0];
+                } else if (data.players.length === 2) {
+                    playerId = data.players[1];
+                }
+                console.log(playerId, gameId)
+            }
 
 
 
+        }
+
+        function updateBoard(cells){
+            cells.forEach(element => {
+                if (element == "white")
+                {
+                    cellsDiv[cells.indexOf(element)].style.backgroundColor = "green";
+
+                }  
+                else
+                {
+                    cellsDiv[cells.indexOf(element)].style.backgroundColor = "green";
+
+                }
+            });
+        }
 
 
 

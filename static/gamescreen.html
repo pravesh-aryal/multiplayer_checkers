@@ -64,12 +64,12 @@
                     "palyerId": playerId,
                     "cells" : cells
                 }
-            cellsDiv.push(cell);
-                ws.send(JSON.stringify(payLoad));
+            ws.send(JSON.stringify(payLoad));
             });
-
+            cellsDiv.push(cell);
             board.appendChild(cell);
         }
+        console.log(cellsDiv)
 
         btnJoin.addEventListener("click", e => {
             payLoad = {
@@ -85,7 +85,6 @@
             if (data.method == "update")
             {
                 cellsArr = data.cells;
-                console.log('AM i ever here?')
                 updateBoard(cellsArr);
             }
 
@@ -107,18 +106,17 @@
         }
 
         function updateBoard(cells){
-            cells.forEach(element => {
-                if (element == "white")
-                {
-                    cellsDiv[cells.indexOf(element)].style.backgroundColor = "green";
 
-                }  
-                else
-                {
-                    cellsDiv[cells.indexOf(element)].style.backgroundColor = "green";
+            console.log(cells, cellsDiv);
+            for (let i = 0; i < 36; i++){
+                console.log('Do i get here')
 
+                if (cells[i] == "red"){
+                    console.log('Do i get here')
+                    cellsDiv[i].style.backgroundColor = "green";
                 }
-            });
+            }
+            
         }
 
 

@@ -2,12 +2,13 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
 import json
+from collections import defaultdict
 
 games = []
 gameCounter = 0
 players = []
 playerCounter = 0
-
+gameSockets: dict[int: list[WebSocket]] = defaultdict(list)
 app = FastAPI()
 
 def getFirstOpenGame():
@@ -25,7 +26,7 @@ def createGame():
     game = {
         "gameId": gameCounter,
         "players": [],
-        "openToConnection": True
+        "openToConnection": True,
     }
     games.append(game)
     return game
@@ -65,16 +66,16 @@ class ConnectionManager:
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
     
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
+    async def broadcast(self, message: str, game: dict):
+        for connection in gameSockets[game["gameId"]]:
+            await connection.send_text(json.dumps(message))
 
 manager = ConnectionManager()
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
+    await manager.connect(websocket)
 
     try:
         while True:
@@ -92,16 +93,20 @@ async def websocket_endpoint(websocket: WebSocket):
                     game = createGame()
                 #now connect to that game
                 game["players"].append(playerId)
+                gameSockets[gameCounter].append(websocket)
                 await websocket.send_text(json.dumps(game))
 
 
             
             if (method == "update"):
                 #frontend sends update event ... now we need to recognize for which game the update is meant to be so we can only update board for the respective players
+                print("updatingggg.....")
+                print(gameSockets)
                 payLoad = {
                     "method" : "update",
                     "cells" : message["cells"]
                 } 
+                await manager.broadcast(payLoad, game)
                 await websocket.send_text(json.dumps(payLoad))
             
     except WebSocketDisconnect:

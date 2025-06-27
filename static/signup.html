@@ -1,11 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sing up</title>
+    <title>Sign up</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
+
 <body>
-    <h2> Sign up page.</h2>
+    <h2>Sign up page</h2>
+
+    <form id="signup-form" action="/signup" method="post">
+        Username: <input type="text" name="username" required>
+        <br><br>
+        Password: <input type="password" name="password" id="password" required>
+        <br><br>
+        Confirm Password: <input type="password" name="confirm_password" id="confirm_password" required>
+        <br><br>
+        <input type="submit" value="Signup" id="btn-submit">
+        <br><br>
+        <div id="error-message" class="error"></div>
+    </form>
+
+    <script>
+        const form = document.getElementById("signup-form");
+        const passwordInput = document.getElementById("password");
+        const confirmInput = document.getElementById("confirm_password");
+        const errorDiv = document.getElementById("error-message");
+
+        form.addEventListener("submit", function (event) {
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+
+            if (password !== confirm) {
+                event.preventDefault();
+                errorDiv.textContent = "Passwords do not match!";
+            } else {
+                errorDiv.textContent = "";
+            }
+        });
+    </script>
 </body>
+
 </html>

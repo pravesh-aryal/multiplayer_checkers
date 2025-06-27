@@ -1,8 +1,15 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Form
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 import json
 from collections import defaultdict
+import file_db
+from typing import Annotated
+import uuid
+
+def generate_uuid():
+    return str(uuid.uuid4())
+
 
 games = []
 gameCounter = 0
@@ -31,6 +38,10 @@ def createGame():
     games.append(game)
     return game
 
+def getTurn():
+    pass
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
@@ -43,9 +54,33 @@ def signup():
     return FileResponse("static/signup.html")
 
 
+@app.post("/signup")
+def signup(request: Request, username: Annotated[str, Form()], password: Annotated[str, Form()], confirm_password: Annotated[str, Form()]):
+    print(request)
+    if (file_db.playerAlreadyExists(username)):
+        return RedirectResponse("/signup", status_code=303)
+
+    userid = generate_uuid()
+
+    file_db.storeNewPlayer(userid, username, password)
+    return RedirectResponse("/login", status_code=303)
+    
+
+
+
 @app.get("/login")
-def login():
-    return FileResponse("static/login.html")
+@app.post("/login")
+def login(request: Request):
+    if request.method == "GET":
+        return FileResponse("static/login.html")
+
+    #will load data from csv for validation
+    #player will look like playerId, username, password
+    username = "somename"
+    if (username not in players):
+        return "username does not exist"
+
+
 
 @app.get("/gamescreen")
 def gamescreen():

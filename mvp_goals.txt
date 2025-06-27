@@ -7,4 +7,6 @@ Flow of the website
 2. No database is used for MVP user info is kept in an array. User signs up or logs in or plays as a guest.
 3. When logged in user gets a button to start a game (player vs player only on MVP), now the started games goes onto games[], where if there are N games when other player logs in and clicks on start a game, the player is random connected to a game.
         if there exists a game which is not FULL connect the second player to the game. 
-4. When either of the player clicks a square, the change is broadcasted to each player real time, is saved on a DB which is just an arr/file in this case, and the moves can be traced back easily. 
+4. When either of the player clicks a square, the change is broadcasted to each player real time, is saved on a DB which is just an arr/file in this case, and the moves can be traced back easily. (this feature to implement later than mvp)
+5. Solution may not be optimal.
+

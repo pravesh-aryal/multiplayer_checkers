@@ -21,6 +21,7 @@ def playerAlreadyExists(username: str) -> bool:
     playersList: list = getPlayerList()
     for playerEntry in playersList:
         if playerEntry[1] == username:
+            print(playerEntry[1], username)
             return True
         
     return False
@@ -31,4 +32,6 @@ def storeNewPlayer(userid: str, username: str, password: str):
         writer = csv.writer(csvfile)
         writer.writerow([userid, username, password])
 
+def isCorrectPassword(username: str, password: str):
 
+    return True

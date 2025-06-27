@@ -6,10 +6,12 @@ from collections import defaultdict
 import file_db
 from typing import Annotated
 import uuid
+from fastapi.templating import Jinja2Templates
 
 def generate_uuid():
     return str(uuid.uuid4())
 
+templates = Jinja2Templates(directory="static")
 
 games = []
 gameCounter = 0
@@ -55,8 +57,7 @@ def signup():
 
 
 @app.post("/signup")
-def signup(request: Request, username: Annotated[str, Form()], password: Annotated[str, Form()], confirm_password: Annotated[str, Form()]):
-    print(request)
+def signup(username: Annotated[str, Form()], password: Annotated[str, Form()], confirm_password: Annotated[str, Form()]):
     if (file_db.playerAlreadyExists(username)):
         return RedirectResponse("/signup", status_code=303)
 
@@ -69,16 +70,26 @@ def signup(request: Request, username: Annotated[str, Form()], password: Annotat
 
 
 @app.get("/login")
-@app.post("/login")
-def login(request: Request):
-    if request.method == "GET":
-        return FileResponse("static/login.html")
+def login():
+    return FileResponse("static/login.html")
 
-    #will load data from csv for validation
-    #player will look like playerId, username, password
-    username = "somename"
-    if (username not in players):
-        return "username does not exist"
+
+from fastapi import HTTPException
+
+@app.post("/login")
+def login(request: Request, username: Annotated[str, Form()], password: Annotated[str, Form()]):
+
+    # will load data from csv for validation
+    # player will look like playerId, username, password
+    if (not file_db.playerAlreadyExists(username) or not file_db.isCorrectPassword(username, password)):
+        print("taktae", username, password)
+        return templates.TemplateResponse("login.html", {
+            "request": request,
+            "error": "Username or password is incorrect."
+        })
+
+    # On success, redirect or show success page
+    return FileResponse("static/gamescreen.html")
 
 
 
